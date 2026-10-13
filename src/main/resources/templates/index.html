@@ -1,133 +1,112 @@
-﻿<!DOCTYPE html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>JavaScript 학습 공간</title>
+    <title>MY COMPANY | 회사 안내</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { min-height: 100vh; background: #f5f6f8; }
-        .topbar { min-height: 64px; }
-        .app-shell { min-height: calc(100vh - 64px); }
-        .sidebar { background: #fff; border-right: 1px solid #e5e7eb; }
-        .sidebar .nav-link { color: #495057; border-radius: .5rem; text-align: left; }
-        .sidebar .nav-link:hover { background: #f1f3f5; }
-        .sidebar .nav-link.active { background: #212529; color: #fff; }
-        .content-card { min-height: 300px; border: 0; }
-        @media (max-width: 767.98px) {
-            .sidebar { border-right: 0; border-bottom: 1px solid #e5e7eb; }
-            .sidebar .nav { flex-direction: row !important; flex-wrap: nowrap; overflow-x: auto; }
-            .sidebar .nav-link { white-space: nowrap; }
+        /* Bootstrap에 없는 고정 사이드바 너비와 콘텐츠 최소 크기만 정의합니다. */
+        .sidebar { width: 250px; }
+        .content-panel { min-width: 0; }
+        .content-frame { min-height: 70vh; }
+        @media (max-width: 575.98px) {
+            .sidebar { width: 135px; }
         }
     </style>
 </head>
-<body>
-    <header class="topbar bg-black text-white d-flex align-items-center px-4 px-lg-5">
-        <a class="navbar-brand text-white fw-semibold mb-0" href="/">JavaScript 학습 공간</a>
-        <span class="ms-auto small text-white-50">FRONT-END STUDY</span>
+<body class="bg-white text-body d-flex flex-column min-vh-100">
+    <header class="d-flex align-items-center px-3 px-md-4 py-3 bg-black text-white">
+        <a class="text-white text-decoration-none fw-bold d-flex align-items-center gap-2" href="/" aria-label="MY COMPANY 홈">
+            <span class="d-inline-flex align-items-center justify-content-center bg-white text-black rounded px-2 py-1" aria-hidden="true">M</span>
+            MY COMPANY
+        </a>
+        <span class="d-none d-sm-inline ms-auto small text-white-50">함께 만드는 더 나은 내일</span>
     </header>
 
-    <div class="container-fluid app-shell">
-        <div class="row min-vh-100">
-            <aside class="sidebar col-md-3 col-lg-2 p-3 p-lg-4">
-                <p class="text-uppercase text-secondary small fw-semibold px-2 mb-3">기본</p>
-                <nav class="nav nav-pills flex-column gap-1" id="lesson-tabs" role="tablist" aria-orientation="vertical">
-                    <a class="nav-link" id="exam01-variables-link" href="/exam01-variables">exam01-variables</a>
-                </nav>
-            </aside>
+    <div class="d-flex flex-grow-1">
+        <aside class="sidebar flex-shrink-0 bg-white border-end d-flex flex-column p-2 p-md-3" aria-label="회사 안내 메뉴">
+            <p class="small text-secondary fw-semibold px-2 mt-3 mb-3">기본</p>
+            <nav class="nav nav-pills flex-column gap-1" id="company-menu" aria-label="기본 메뉴">
+                <button class="nav-link text-start text-break rounded px-2 px-sm-3 py-2" type="button">/exam01-variables</button>
+                <button class="nav-link text-start text-break rounded px-2 px-sm-3 py-2" type="button">/exam02-function</button>
+                <button class="nav-link text-start text-break rounded px-2 px-sm-3 py-2" type="button">/exam03-object</button>
+                <button class="nav-link text-start text-break rounded px-2 px-sm-3 py-2" type="button">/exam04-array</button>
+            </nav>
+            <div class="mt-auto pt-5 px-2 small text-secondary">MY COMPANY<br><span class="small">Company Information</span></div>
+        </aside>
 
-            <main class="col-md-9 col-lg-10 p-4 p-lg-5">
-                <div id="remote-content" class="d-none" aria-live="polite"></div>
-                <div class="tab-content" id="lesson-content">
-                    <section class="tab-pane fade show active" id="intro-panel" role="tabpanel" aria-labelledby="intro-tab" tabindex="0">
-                        <div class="card content-card shadow-sm"><div class="card-body p-4 p-lg-5">
-                            <span class="badge text-bg-dark mb-3">WELCOME</span>
-                            <h1 class="h2 fw-bold mb-3">JavaScript 학습 공간</h1>
-                            <p class="text-secondary mb-0">왼쪽 메뉴에서 학습할 항목을 선택해 보세요. 선택한 내용이 이 영역에 표시됩니다.</p>
-                        </div></div>
-                    </section>
-                    <section class="tab-pane fade" id="variables-panel" role="tabpanel" aria-labelledby="variables-tab" tabindex="0">
-                        <div class="card content-card shadow-sm"><div class="card-body p-4 p-lg-5">
-                            <span class="badge text-bg-primary mb-3">LESSON 01</span>
-                            <h1 class="h2 fw-bold mb-3">변수와 자료형</h1>
-                            <p class="text-secondary">변수는 데이터를 담아 두는 이름입니다. JavaScript에서는 <code>const</code>와 <code>let</code>으로 변수를 선언할 수 있습니다.</p>
-                            <pre class="bg-light rounded p-3 mb-0"><code>const course = "JavaScript";
-let lessonCount = 4;</code></pre>
-                        </div></div>
-                    </section>
-                    <section class="tab-pane fade" id="conditions-panel" role="tabpanel" aria-labelledby="conditions-tab" tabindex="0">
-                        <div class="card content-card shadow-sm"><div class="card-body p-4 p-lg-5">
-                            <span class="badge text-bg-success mb-3">LESSON 02</span>
-                            <h1 class="h2 fw-bold mb-3">조건문</h1>
-                            <p class="text-secondary">조건문을 사용하면 조건의 참·거짓에 따라 서로 다른 코드를 실행할 수 있습니다.</p>
-                            <pre class="bg-light rounded p-3 mb-0"><code>if (score >= 60) {
-  console.log("합격");
-}</code></pre>
-                        </div></div>
-                    </section>
-                    <section class="tab-pane fade" id="loops-panel" role="tabpanel" aria-labelledby="loops-tab" tabindex="0">
-                        <div class="card content-card shadow-sm"><div class="card-body p-4 p-lg-5">
-                            <span class="badge text-bg-warning mb-3">LESSON 03</span>
-                            <h1 class="h2 fw-bold mb-3">반복문</h1>
-                            <p class="text-secondary">반복문은 같은 작업을 여러 번 실행할 때 사용합니다.</p>
-                            <pre class="bg-light rounded p-3 mb-0"><code>for (let i = 1; i <= 5; i++) {
-  console.log(i);
-}</code></pre>
-                        </div></div>
-                    </section>
+        <main class="content-panel flex-grow-1 bg-white">
+            <div class="w-100">
+                <div id="company-content" aria-busy="false">
+                    <p id="request-status" class="text-secondary" role="status" aria-live="polite">메뉴를 선택해 주세요.</p>
+                    <iframe id="content-frame" title="선택한 메뉴 내용" class="content-frame w-100 border-0 rounded bg-white" hidden></iframe>
                 </div>
-            </main>
-        </div>
+            </div>
+        </main>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const menu = document.getElementById('lesson-tabs');
-        const lessonContent = document.getElementById('lesson-content');
-        const remoteContent = document.getElementById('remote-content');
+        const menu = document.getElementById('company-menu');
+        const content = document.getElementById('company-content');
+        const frame = document.getElementById('content-frame');
+        const status = document.getElementById('request-status');
+        let currentRequest;
 
-        menu.addEventListener('click', async (event) => {
-            const link = event.target.closest('#exam01-variables-link');
-            if (link) {
-                event.preventDefault();
-                menu.querySelectorAll('.nav-link').forEach((item) => {
-                    item.classList.remove('active');
-                    item.setAttribute('aria-selected', 'false');
+        async function loadMenu(button) {
+            currentRequest?.abort();
+            const request = new AbortController();
+            currentRequest = request;
+            const name = button.textContent.trim();
+            const path = name.startsWith('/') ? name : '/' + name;
+
+            menu.querySelectorAll('button').forEach(item => {
+                const selected = item === button;
+                item.classList.toggle('active', selected);
+                if (selected) item.setAttribute('aria-current', 'true');
+                else item.removeAttribute('aria-current');
+            });
+            content.setAttribute('aria-busy', 'true');
+            frame.hidden = true;
+            status.hidden = false;
+            status.className = 'text-secondary';
+            status.textContent = name + ' 내용을 불러오는 중입니다.';
+
+            try {
+                const response = await fetch(path, {
+                    signal: request.signal,
+                    headers: { Accept: 'text/html' }
                 });
-                link.classList.add('active');
-                link.setAttribute('aria-selected', 'true');
-                lessonContent.classList.add('d-none');
-                remoteContent.classList.remove('d-none');
-                remoteContent.setAttribute('aria-busy', 'true');
-                remoteContent.innerHTML = '<p class="text-secondary">응답을 불러오는 중...</p>';
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const html = await response.text();
+                if (request.signal.aborted) return;
 
-                try {
-                    const response = await fetch(link.href);
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    const html = await response.text();
-                    const documentFragment = new DOMParser().parseFromString(html, 'text/html');
-                    const card = documentFragment.querySelector('.card');
-                    if (!card) throw new Error('응답에 카드 내용이 없습니다.');
-                    remoteContent.replaceChildren(card);
-                } catch (error) {
-                    remoteContent.innerHTML = '<div class="alert alert-danger" role="alert">응답을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</div>';
-                    console.error('exam01-variables fetch failed:', error);
-                } finally {
-                    remoteContent.setAttribute('aria-busy', 'false');
+                // 별도 문서로 표시하여 예제의 스타일과 스크립트도 동작하게 합니다.
+                const documentContent = new DOMParser().parseFromString(html, 'text/html');
+                if (!documentContent.querySelector('base')) {
+                    const base = documentContent.createElement('base');
+                    base.href = response.url;
+                    documentContent.head.prepend(base);
                 }
-            } else if (event.target.closest('button.nav-link')) {
-                remoteContent.classList.add('d-none');
-                lessonContent.classList.remove('d-none');
+                frame.title = name + ' 내용';
+                frame.srcdoc = '<!doctype html>' + documentContent.documentElement.outerHTML;
+                frame.hidden = false;
+                status.textContent = name + ' 내용을 불러왔습니다.';
+                status.className = 'visually-hidden';
+            } catch (error) {
+                if (request.signal.aborted) return;
+                status.className = 'alert alert-danger';
+                status.textContent = path + ' 요청에 실패했습니다. (' + error.message + ')';
+            } finally {
+                if (currentRequest === request) content.setAttribute('aria-busy', 'false');
             }
+        }
+
+        menu.addEventListener('click', event => {
+            const button = event.target.closest('button');
+            if (button && menu.contains(button)) loadMenu(button);
         });
+        loadMenu(menu.querySelector('button'));
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
