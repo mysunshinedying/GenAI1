@@ -5,15 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>/exam04-array</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script>
+        function btn1Click() {
+            console.log("Button 1 clicked");
+        const arr = ['Javascript', 'React', 10, {mid: 'Hong', mname: '홍길동'}, ['a', 'b', 'c']];
+        console.log(arr.length);
+
+        for (let i = 0; i < arr.length; i++) {
+            console.log(`arr[${i}] : ${arr[i]}`);
+        }
+
+        arr.forEach((item, index) => {
+            console.log(`arr[${index}] : ${item}`);
+        });
+
+        }
+
+
+
+        function btn2Click() {
+            const arr = [
+                {bno: 1, title: '제목1', writer: '홍길동'},
+                {bno: 2, title: '제목2', writer: '김철수'},
+                {bno: 3, title: '제목3', writer: '이영희'},
+                {bno: 4, title: '제목4', writer: '박영수'},
+                {bno: 5, title: '제목5', writer: '최민수'}
+            ];
+
+            arr.forEach((item, index) => {
+                if(item.bno === 3) {
+                    console.log(item.bno);
+                    console.log(item.title);
+                    console.log(item.writer);
+                }
+            });
+        }
+
+            
+
+        function btn3Click() {
+            const arr = [
+                {bno: 1, title: '제목1', writer: '홍길동'},
+                {bno: 2, title: '제목2', writer: '김철수'},
+                {bno: 3, title: '제목3', writer: '이영희'},
+                {bno: 4, title: '제목4', writer: '박영수'},
+                {bno: 5, title: '제목5', writer: '최민수'}
+            ];
+
+        console.log(arr);
+                    
+            const arr2 = arr.map((item, index) => {
+                return item;
+            });
+            console.log(arr2);
+            console.log("------------------------------");
+
+            const arr3 = arr.map((item, index) => {
+                if(item.writer === '박영수') {
+                    const newItem = {...item, writer: '홍길동'};
+                    return newItem;
+                }
+                return item;
+            });
+            console.log(arr3);
+        }        
+
+        function btn4Click() {
+            const arr = [
+                {bno: 1, title: '제목1', writer: '홍길동', dateTime: new Date().toLocaleString('ko-KR')},
+                {bno: 2, title: '제목2', writer: '김철수', dateTime: new Date().toLocaleString('ko-KR')},
+                {bno: 3, title: '제목3', writer: '이영희', dateTime: new Date().toLocaleString('ko-KR')},
+                {bno: 4, title: '제목4', writer: '박영수', dateTime: new Date().toLocaleString('ko-KR')},
+                {bno: 5, title: '제목5', writer: '최민수', dateTime: new Date().toLocaleString('ko-KR')}
+            ];
+
+            
+
+        }
+    </script>
 </head>
 <body class="bg-white text-body">
     <main class="container-fluid p-3 p-md-4">
         <article class="card shadow-sm rounded-3 overflow-hidden" aria-labelledby="request-title">
             <header class="card-header bg-body-tertiary p-3 p-md-4">
-                <h1 id="request-title" class="fs-6 fw-normal mb-0" th:text="${requestPath}">/exam04-array</h1>
+                <h1 id="request-title" class="fs-6 fw-normal mb-0">/exam04-array</h1>
             </header>
             <div class="card-body p-3 p-md-4">
-                <p class="text-break mb-0" th:text="${responseResult}">배열 예제 페이지 요청이 정상적으로 처리되었습니다.</p>
+                <p class="text-break mb-0">
+                    <button class="btn btn-primary" onclick="btn1Click()">Btn1</button>
+                    <button class="btn btn-secondary" onclick="btn2Click()">Btn2</button>
+                    <button class="btn btn-success" onclick="btn3Click()">Btn3</button>
+                    <button class="btn btn-danger" onclick="btn4Click()">Btn4</button>
+                </p>
             </div>
         </article>
     </main>

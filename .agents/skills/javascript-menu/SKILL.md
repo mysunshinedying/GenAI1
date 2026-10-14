@@ -1,4 +1,4 @@
-﻿---
+---
 name: javascript-menu
 description: javascript Spring Boot·Thymeleaf 프로젝트에서 예제 메뉴를 추가하거나 변경할 때 index.html 메뉴, UIController 요청 경로, Bootstrap 5.3 응답 카드 HTML을 함께 생성·수정한다.
 ---
@@ -31,20 +31,17 @@ description: javascript Spring Boot·Thymeleaf 프로젝트에서 예제 메뉴�
 
 ### 컨트롤러
 
-`UIController`에 기존 스타일의 요청 메서드를 추가한다. 요청 경로, 뷰 이름, 템플릿 파일 이름을 일치시킨다. 기존 경로가 있으면 해당 메서드를 수정하고 중복 매핑은 만들지 않는다.
+`UIController`에 기존 스타일의 요청 메서드를 추가한다. 요청 경로, 뷰 이름, 템플릿 파일 이름을 일치시킨다. 기존 경로가 있으면 해당 메서드를 수정하고 중복 매핑은 만들지 않는다. 요청 메서드에는 `Model` 인자를 받거나 `model.addAttribute`를 추가하지 않는다.
 
 ```java
 @RequestMapping("/exam03-array")
-public String exam03Array(HttpServletRequest request, Model model) {
-    model.addAttribute("requestPath", request.getRequestURI());
-    model.addAttribute("responseResult", "배열 예제 페이지 요청이 정상적으로 처리되었습니다.");
+public String exam03Array() {
     return "basic/exam03-array";
 }
 ```
 
-- 카드 제목용 `requestPath`는 실제 `request.getRequestURI()`를 사용한다.
-- 카드 본문용 `responseResult`에는 사용자가 요청한 응답 데이터를 전달한다. 메뉴와 페이지 골격만 요청한 경우에는 기존 예제처럼 주제에 맞는 요청 처리 안내 문구를 넣는다.
-- 기존 import를 재사용한다. 누락된 경우에만 `Model`, `HttpServletRequest`, `RequestMapping`을 추가한다.
+- 컨트롤러에서 `Model` 인자를 받지 않고 `model.addAttribute`를 추가하지 않는다.
+- 기존 import를 재사용한다. 누락된 경우에만 `RequestMapping`을 추가한다.
 - 별도로 요청하지 않은 API나 JavaScript 학습 예제 기능은 추가하지 않는다.
 
 ### HTML 응답 카드
@@ -56,8 +53,8 @@ public String exam03Array(HttpServletRequest request, Model model) {
 - 모든 디자인은 Bootstrap 컴포넌트와 유틸리티 클래스를 우선 사용한다. Bootstrap에서 제공하지 않는 기능에만 CSS를 작성한다.
 - 카드: `card shadow-sm rounded-3 overflow-hidden`.
 - 카드 헤더: `card-header bg-body-tertiary p-3 p-md-4`.
-- 제목: `h1`을 유지하되 `fs-6 fw-normal mb-0`로 본문과 같은 크기·굵기를 사용한다. `th:text="${requestPath}"`로 실제 경로를 출력하고 정적 대체 문구도 새 경로로 바꾼다.
-- 본문: `card-body p-3 p-md-4` 안에서 `th:text="${responseResult}"`로 응답 문자열을 출력한다. 임의의 HTML을 출력하는 `th:utext`로 변경하지 않는다.
+- 제목: `h1`을 유지하되 `fs-6 fw-normal mb-0`로 본문과 같은 크기·굵기를 사용한다. 제목에 요청 경로를 표시하고 정적 대체 문구도 새 경로로 바꾼다.
+- 본문: `card-body p-3 p-md-4` 안에서 예제에 맞는 정적 응답 문구를 표시한다. 컨트롤러에 모델 데이터를 추가하지 않는다.
 - 긴 문자열에는 Bootstrap `text-break`를 사용한다. 줄바꿈 보존이 필요하면 `.response-content { white-space: pre-wrap; }`만 별도 CSS로 유지한다.
 - 응답 페이지에는 전체 사이트 헤더나 메뉴를 중복해서 넣지 않는다. 직접 요청과 우측 iframe 표시 모두 가능한 완전한 HTML 문서를 생성한다.
 

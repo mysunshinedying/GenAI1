@@ -1,4 +1,4 @@
-package com.mycompany.demo.controller;
+﻿package com.mycompany.demo.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,9 +35,7 @@ public class UIController {
     }
 
     @RequestMapping("/exam04-array")
-    public String exam04Array(HttpServletRequest request, Model model) {
-        model.addAttribute("requestPath", request.getRequestURI());
-        model.addAttribute("responseResult", "배열 예제 페이지 요청이 정상적으로 처리되었습니다.");
+    public String exam04Array() {
         return "basic/exam04-array";
     }
 }
