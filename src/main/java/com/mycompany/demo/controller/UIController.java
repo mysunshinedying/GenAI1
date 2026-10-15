@@ -1,4 +1,4 @@
-﻿package com.mycompany.demo.controller;
+package com.mycompany.demo.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,5 +37,20 @@ public class UIController {
     @RequestMapping("/exam04-array")
     public String exam04Array() {
         return "basic/exam04-array";
+    }
+
+    @RequestMapping("/exam05-dom")
+    public String exam05Dom() {
+        return "basic/exam05-dom";
+    }
+
+    @RequestMapping("/exam06-form")
+    public String exam06Form() {
+        return "basic/exam06-form";
+    }
+
+    @RequestMapping("/exam07-fetch")
+    public String exam07Fetch() {
+        return "basic/exam07-fetch";
     }
 }

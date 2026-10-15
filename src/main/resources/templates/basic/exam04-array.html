@@ -77,11 +77,20 @@
                 {bno: 3, title: '제목3', writer: '이영희', dateTime: new Date().toLocaleString('ko-KR')},
                 {bno: 4, title: '제목4', writer: '박영수', dateTime: new Date().toLocaleString('ko-KR')},
                 {bno: 5, title: '제목5', writer: '최민수', dateTime: new Date().toLocaleString('ko-KR')}
-            ];
-
-            
+            ];        
 
         }
+
+        function btn5Click() {
+            const arr = ['a', 'b', 'c', 'd', 'e'];
+            let [item, item2, item3] = arr;
+            console.log(item);
+            console.log(item2);
+            console.log(item3);
+
+            item1 = arr[0];
+        }
+
     </script>
 </head>
 <body class="bg-white text-body">
@@ -96,6 +105,7 @@
                     <button class="btn btn-secondary" onclick="btn2Click()">Btn2</button>
                     <button class="btn btn-success" onclick="btn3Click()">Btn3</button>
                     <button class="btn btn-danger" onclick="btn4Click()">Btn4</button>
+                    <button class="btn btn-warning" onclick="btn5Click()">Btn5</button>
                 </p>
             </div>
         </article>
