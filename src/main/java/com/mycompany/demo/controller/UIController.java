@@ -53,4 +53,14 @@ public class UIController {
     public String exam07Fetch() {
         return "basic/exam07-fetch";
     }
+
+    @RequestMapping("/exam08-fetch-form")
+    public String exam08FetchForm() {
+        return "basic/exam08-fetch-form";
+    }
+
+    @RequestMapping("/exam09-fetch-form")
+    public String exam09FetchForm() {
+        return "basic/exam09-fetch-form";
+    }
 }
