@@ -1,5 +1,16 @@
 package com.mycompany.demo.receivedata.dto;
 
-public class Dto2 {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data 
+@NoArgsConstructor 
+@AllArgsConstructor 
+public class Dto2 {
+    private String bno;
+    private String btitle;
+    private String bcontent;
+    private String fileName;
+    private String fileType;
 }
