@@ -10,24 +10,24 @@ import com.mycompany.demo.di.dto.JoinRequest;
 import com.mycompany.demo.di.service.AiService;
 import com.mycompany.demo.di.service.BoardService;
 import com.mycompany.demo.di.service.DiInterface;
-import com.mycompany.demo.di.service.MemberService;
+import com.mycompany.demo.di.service.DiMemberService;
 
 // DI: 생성자 주입
 @RestController
 @RequestMapping("/di2")
 public class DiController2 {
 
-    private final MemberService memberService;
+    private final DiMemberService diMemberService;
     private final BoardService boardService;
     private final AiService aiService;
     private final DiInterface diInterface;
 
     public DiController2(
-            MemberService memberService,
+            DiMemberService diMemberService,
             BoardService boardService,
             AiService aiService,
             @Qualifier("diInterfaceImplB") DiInterface diInterface) {
-        this.memberService = memberService;
+        this.diMemberService = diMemberService;
         this.boardService = boardService;
         this.aiService = aiService;
         this.diInterface = diInterface;
@@ -35,7 +35,7 @@ public class DiController2 {
 
     @PostMapping("/join")
     public String join(JoinRequest joinRequest) {
-        memberService.join();
+        diMemberService.join();
         return "회원가입";
     }
 

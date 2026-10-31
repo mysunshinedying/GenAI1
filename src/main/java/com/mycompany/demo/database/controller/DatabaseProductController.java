@@ -26,7 +26,7 @@ public class DatabaseProductController {
     private final ProductDao productDao;
 
     @GetMapping("/get-product")
-    public Product getProduct(@RequestParam("productId") long productId) {
+    public Product getProduct(@RequestParam("productId") String productId) {
         return productDao.selectById(productId);
     }
 
@@ -43,7 +43,7 @@ public class DatabaseProductController {
     }
 
     @DeleteMapping("/delete-product")
-    public String deleteProduct(@RequestParam("productId") long productId) {
+    public String deleteProduct(@RequestParam("productId") String productId) {
         int rows = productDao.deleteById(productId);
         return "productId: " + productId + (rows > 0 ? " deleted" : " not found");
     }

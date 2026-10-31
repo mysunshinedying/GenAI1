@@ -14,6 +14,6 @@ public class Board {
     private String title;
     private String content;
     private String writer;
-    private Date writtenAt;
+    private Date writedAt;
     private long productId;
 }

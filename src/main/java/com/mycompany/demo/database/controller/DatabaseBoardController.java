@@ -42,7 +42,7 @@ public class DatabaseBoardController {
     }
 
     @DeleteMapping("delete-board")
-    public String deleteBoard(@RequestParam("boardId") long boardId) {
+    public String deleteBoard(@RequestParam("boardId") String boardId) {
         int rows = boardDao.deleteById(boardId);
         if(rows > 0) {
             return "boardId: " + boardId + "가 삭제 되었습니다. 삭제된 행 수: " + rows;

@@ -1,47 +1,46 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.mycompany.demo.database.dao.ProductDao">
+
     <insert id="insert" parameterType="product" useGeneratedKeys="true" keyProperty="productId" keyColumn="product_id">
         INSERT INTO product (product_name, price, seller_id)
         VALUES (#{productName}, #{price}, #{sellerId})
     </insert>
 
-    <select id="selectById" parameterType="long" resultType="product">
+    <select id="selectById" resultType="product">
         SELECT product_id, product_name, price, seller_id
         FROM product
-        WHERE product_id = #{productId}
+        WHERE product_id = CAST(#{productId} AS BIGINT)
     </select>
 
-    <select id="selectCount" parameterType="map" resultType="int">
+    <!-- where keys: productId, productName, sellerId -->
+    <sql id="searchCondition">
+        <where>
+            <if test="where != null">
+                <if test="where.productId != null">
+                    AND product_id = #{where.productId}
+                </if>
+                <if test="where.productName != null and where.productName != ''">
+                    AND product_name LIKE CONCAT('%', #{where.productName}, '%')
+                </if>
+                <if test="where.sellerId != null">
+                    AND seller_id = #{where.sellerId}
+                </if>
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectCount" resultType="_int">
         SELECT COUNT(*)
         FROM product
-        <where>
-            <if test="where != null">
-                <if test="where.productName != null and where.productName != ''">
-                    AND product_name LIKE CONCAT('%', #{where.productName}, '%')
-                </if>
-                <if test="where.sellerId != null">
-                    AND seller_id = #{where.sellerId}
-                </if>
-            </if>
-        </where>
+        <include refid="searchCondition" />
     </select>
 
-    <select id="selectPage" parameterType="map" resultType="product">
+    <select id="selectPage" resultType="product">
         SELECT product_id, product_name, price, seller_id
         FROM product
-        <where>
-            <if test="where != null">
-                <if test="where.productName != null and where.productName != ''">
-                    AND product_name LIKE CONCAT('%', #{where.productName}, '%')
-                </if>
-                <if test="where.sellerId != null">
-                    AND seller_id = #{where.sellerId}
-                </if>
-            </if>
-        </where>
+        <include refid="searchCondition" />
         ORDER BY product_id DESC
         LIMIT #{pager.rowsPerPage} OFFSET #{pager.startRowIndex}
     </select>
@@ -54,8 +53,9 @@
         WHERE product_id = #{productId}
     </update>
 
-    <delete id="deleteById" parameterType="long">
+    <delete id="deleteById">
         DELETE FROM product
-        WHERE product_id = #{productId}
+        WHERE product_id = CAST(#{productId} AS BIGINT)
     </delete>
+
 </mapper>

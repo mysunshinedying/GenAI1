@@ -19,7 +19,10 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// Mybatis 라이브러리 의존성 추가
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5'
+
+	// PostgreSQL JDBC 드라이버 의존성 추가
 	runtimeOnly 'org.postgresql:postgresql'
 	compileOnly 'org.projectlombok:lombok:1.18.38'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -33,6 +36,12 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'com.oracle.database.jdbc:ojdbc8:21.9.0.0'
+
+	implementation 'org.springframework.security:spring-security-crypto'
+	// JWT 생성 및 파싱을 위한 라이브러리
+	implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.13.0'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.13.0'
 }
 
 tasks.named('test') {

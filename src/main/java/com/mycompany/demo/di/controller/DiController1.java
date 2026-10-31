@@ -11,7 +11,7 @@ import com.mycompany.demo.di.dto.JoinRequest;
 import com.mycompany.demo.di.service.AiService;
 import com.mycompany.demo.di.service.BoardService;
 import com.mycompany.demo.di.service.DiInterface;
-import com.mycompany.demo.di.service.MemberService;
+import com.mycompany.demo.di.service.DiMemberService;
 
 // DI: 필드 주입 - Legacy 방식
 @RestController
@@ -19,7 +19,7 @@ import com.mycompany.demo.di.service.MemberService;
 public class DiController1 {
 
     @Autowired
-    private MemberService memberService;
+    private DiMemberService diMemberService;
 
     @Autowired
     private BoardService boardService;
@@ -33,7 +33,7 @@ public class DiController1 {
 
     @PostMapping("/join")
     public String join(JoinRequest joinRequest) {
-        memberService.join();
+        diMemberService.join();
         return "회원가입";
     }
 
