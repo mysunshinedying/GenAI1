@@ -1,1 +1,3 @@
-﻿
+﻿# Node.js
+node-app-test/node_modules/
+node-app-test/npm-debug.log*
