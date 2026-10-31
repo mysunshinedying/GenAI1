@@ -45,3 +45,15 @@ node-app-test/node_modules/
 node-app-test/npm-debug.log*
 
 node-app-test/
+
+# Front-end
+front-end/node_modules/
+
+# Front-end
+front-end/.next/
+
+# Front-end
+front-end/out/
+
+# Front-end
+front-end/npm-debug.log*
