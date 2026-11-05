@@ -1,0 +1,52 @@
+Project database_homework {
+  database_type: 'PostgreSQL'
+}
+
+Table student [note: '수강생 정보'] {
+  student_id bigint [pk, not null, increment, note: '수강생 번호']
+  student_number varchar(20) [not null, unique, note: '학번']
+  student_name varchar(100) [not null, note: '수강생 이름']
+  email varchar(254) [not null, unique, note: '이메일 주소']
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`, note: '등록 일시']
+}
+
+Table instructor [note: '강사 정보'] {
+  instructor_id bigint [pk, not null, increment, note: '강사 번호']
+  instructor_name varchar(100) [not null, note: '강사 이름']
+  email varchar(254) [not null, unique, note: '이메일 주소']
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`, note: '등록 일시']
+}
+
+Table course [note: '강의 정보'] {
+  course_id bigint [pk, not null, increment, note: '강의 번호']
+  instructor_id bigint [not null, note: '담당 강사 번호']
+  course_code varchar(20) [not null, unique, note: '강의 코드']
+  course_name varchar(200) [not null, note: '강의명']
+  description text [note: '강의 설명']
+  capacity integer [not null, note: '정원']
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`, note: '개설 일시']
+
+  checks {
+    `capacity > 0` [name: 'ck_course_capacity']
+  }
+}
+
+Table enrollment [note: '수강 신청'] {
+  enrollment_id bigint [pk, not null, increment, note: '수강 신청 번호']
+  student_id bigint [not null, note: '수강생 번호']
+  course_id bigint [not null, note: '강의 번호']
+  status varchar(20) [not null, note: '신청 상태']
+  enrolled_at timestamp [not null, default: `CURRENT_TIMESTAMP`, note: '신청 일시']
+
+  indexes {
+    (student_id, course_id) [unique, name: 'uq_enrollment_student_course']
+  }
+
+  checks {
+    `status IN ('ENROLLED', 'CANCELLED')` [name: 'ck_enrollment_status']
+  }
+}
+
+Ref fk_course_instructor: course.instructor_id > instructor.instructor_id
+Ref fk_enrollment_student: enrollment.student_id > student.student_id
+Ref fk_enrollment_course: enrollment.course_id > course.course_id

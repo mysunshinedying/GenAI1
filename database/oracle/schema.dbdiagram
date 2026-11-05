@@ -1,0 +1,143 @@
+{
+  "version": "3.0.0",
+  "darkMode": false,
+  "gridEnabling": false,
+  "currentViewName": null,
+  "defaultView": {
+    "detailLevel": "All",
+    "relationshipMode": "All",
+    "tablePositions": [
+      {
+        "name": "member",
+        "schemaName": "public",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "name": "review",
+        "schemaName": "public",
+        "x": 0,
+        "y": 240
+      },
+      {
+        "name": "product",
+        "schemaName": "public",
+        "x": 648,
+        "y": 0
+      },
+      {
+        "name": "seller",
+        "schemaName": "public",
+        "x": 328,
+        "y": 0
+      },
+      {
+        "name": "orders",
+        "schemaName": "public",
+        "x": 656.8557394227057,
+        "y": 256
+      },
+      {
+        "name": "order_item",
+        "schemaName": "public",
+        "x": 328,
+        "y": 240
+      }
+    ],
+    "tableGroupCollapseStates": [],
+    "stickyNoteLayouts": [],
+    "referencePaths": [
+      {
+        "firstFieldNames": [
+          "writer"
+        ],
+        "firstTableName": "review",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "member_id"
+        ],
+        "secondTableName": "member",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "product_id"
+        ],
+        "firstTableName": "review",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "product_id"
+        ],
+        "secondTableName": "product",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "seller_id"
+        ],
+        "firstTableName": "product",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "seller_id"
+        ],
+        "secondTableName": "seller",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "order_id"
+        ],
+        "firstTableName": "order_item",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "order_id"
+        ],
+        "secondTableName": "orders",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "product_id"
+        ],
+        "firstTableName": "order_item",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "product_id"
+        ],
+        "secondTableName": "product",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "member_id"
+        ],
+        "firstTableName": "orders",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "member_id"
+        ],
+        "secondTableName": "member",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      }
+    ]
+  },
+  "views": {}
+}

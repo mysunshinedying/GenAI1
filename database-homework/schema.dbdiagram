@@ -1,0 +1,86 @@
+{
+  "version": "3.0.0",
+  "darkMode": false,
+  "gridEnabling": false,
+  "currentViewName": null,
+  "defaultView": {
+    "detailLevel": "All",
+    "relationshipMode": "All",
+    "tablePositions": [
+      {
+        "name": "student",
+        "schemaName": "public",
+        "x": 12,
+        "y": 12
+      },
+      {
+        "name": "instructor",
+        "schemaName": "public",
+        "x": 12,
+        "y": 250
+      },
+      {
+        "name": "course",
+        "schemaName": "public",
+        "x": 583.80146484375,
+        "y": 53
+      },
+      {
+        "name": "enrollment",
+        "schemaName": "public",
+        "x": 1107.15908203125,
+        "y": 12
+      }
+    ],
+    "tableGroupCollapseStates": [],
+    "stickyNoteLayouts": [],
+    "referencePaths": [
+      {
+        "firstFieldNames": [
+          "instructor_id"
+        ],
+        "firstTableName": "course",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "instructor_id"
+        ],
+        "secondTableName": "instructor",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "student_id"
+        ],
+        "firstTableName": "enrollment",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "student_id"
+        ],
+        "secondTableName": "student",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      },
+      {
+        "firstFieldNames": [
+          "course_id"
+        ],
+        "firstTableName": "enrollment",
+        "firstSchemaName": "public",
+        "firstRelation": "*",
+        "secondFieldNames": [
+          "course_id"
+        ],
+        "secondTableName": "course",
+        "secondSchemaName": "public",
+        "secondRelation": "1",
+        "checkPoints": []
+      }
+    ]
+  },
+  "views": {}
+}

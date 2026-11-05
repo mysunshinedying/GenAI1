@@ -1,0 +1,67 @@
+Project oracle_schema {
+  database_type: 'Oracle'
+}
+
+Table member [note: '회원 정보'] {
+  member_id varchar(15) [pk, not null, note: '회원 아이디']
+  member_name varchar(20) [not null, note: '회원 이름']
+  password varchar(100) [not null, note: '비밀번호']
+  email varchar(50) [unique, note: '이메일']
+  joined_at date [not null, default: `SYSDATE`, note: '가입 일시']
+}
+
+Table seller [note: '판매자 정보'] {
+  seller_id int [pk, not null, increment, note: '판매자 번호']
+  seller_name varchar(200) [not null, note: '판매자 이름']
+  email varchar(50) [not null, unique, note: '이메일']
+  phone varchar(15) [not null, note: '전화번호']
+  registered_at date [not null, default: `SYSDATE`, note: '등록 일시']
+}
+
+Table product [note: '상품 정보'] {
+  product_id int [pk, not null, increment, note: '상품 번호']
+  product_name varchar(200) [not null, note: '상품명']
+  price int [not null, note: '가격']
+  seller_id int [not null, note: '판매자 번호']
+}
+
+Table orders [note: '주문 정보'] {
+  order_id number(19,0) [pk, not null, increment, note: '주문 번호']
+  member_id varchar(50) [not null, note: '회원 아이디']
+  ordered_at timestamp [not null, default: `CURRENT_TIMESTAMP`, note: '주문 일시']
+}
+
+Table review [note: '게시글 정보'] {
+  review_id int [pk, not null, increment, note: '게시글 번호']
+  title varchar(200) [not null, note: '제목']
+  content text [not null, note: '내용']
+  file_name varchar(255) [note: '첨부 파일 이름']
+  file_type varchar(100) [note: '첨부 파일 MIME 타입']
+  file_data blob [note: '첨부 파일 데이터']
+  writer varchar(15) [not null, note: '작성자 회원 아이디']
+  written_at date [not null, note: '작성 일시']
+  product_id int [not null, note: '상품 번호']
+}
+
+Table order_item [note: '주문 상품 정보'] {
+  order_id int [not null, note: '주문 번호']
+  product_id int [not null, note: '상품 번호']
+  quantity int [not null, note: '수량']
+  unit_price int [not null, note: '주문 당시 가격']
+
+  indexes {
+    (order_id, product_id) [pk]
+  }
+}
+
+Ref fk_product_seller: product.seller_id > seller.seller_id
+Ref fk_orders_member: orders.member_id > member.member_id
+Ref fk_review_member: review.writer > member.member_id
+Ref fk_review_product: review.product_id > product.product_id
+Ref fk_order_item_orders: order_item.order_id > orders.order_id
+Ref fk_order_item_product: order_item.product_id > product.product_id
+
+
+
+
+

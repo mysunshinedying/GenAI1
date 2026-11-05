@@ -1,0 +1,32 @@
+package com.mycompany.demo.database.service;
+import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import com.mycompany.demo.database.dao.ReviewDao;
+import com.mycompany.demo.database.dto.Pager;
+import com.mycompany.demo.database.entity.Review;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class ReviewService {
+    private final ReviewDao reviewDao;
+
+    public int pagingTotalRows(Map<String, Object> where) {
+        return reviewDao.selectCount(where);
+    }
+
+    public List<Review> listReview(Pager pager, Map<String, Object> where) {
+        return reviewDao.selectPage(pager, where);
+    }
+
+    public int write(Review review) {
+        return reviewDao.insert(review);
+    }
+
+}

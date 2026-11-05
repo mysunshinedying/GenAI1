@@ -9,7 +9,11 @@ import com.mycompany.demo.di.dto.JoinRequest;
 import com.mycompany.demo.di.service.AiService;
 import com.mycompany.demo.di.service.BoardService;
 import com.mycompany.demo.di.service.DiInterface;
+<<<<<<< HEAD
 import com.mycompany.demo.di.service.MemberService;
+=======
+import com.mycompany.demo.di.service.DiMemberService;
+>>>>>>> dd86f028 (feat: daily update)
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,14 +23,22 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/di3")
 public class DiController3 {
 
+<<<<<<< HEAD
     private final MemberService memberService;
+=======
+    private final DiMemberService diMemberService;
+>>>>>>> dd86f028 (feat: daily update)
     private final BoardService boardService;
     private final AiService aiService;
     private final DiInterface diInterface;
 
     @PostMapping("/join")
     public String join(JoinRequest joinRequest) {
+<<<<<<< HEAD
         memberService.join();
+=======
+        diMemberService.join();
+>>>>>>> dd86f028 (feat: daily update)
         return "회원가입";
     }
 
