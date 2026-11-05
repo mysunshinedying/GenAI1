@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.mycompany.demo.database.dao.BoardDao">
+<mapper namespace="com.mycompany.demo.database.dao.ReviewDao">
 
-    <insert id="insert" parameterType="board" useGeneratedKeys="true" keyProperty="boardId" keyColumn="board_id">
-        INSERT INTO board (title, content, writer, writed_at, product_id)
-        VALUES (#{title}, #{content}, #{writer}, CURRENT_TIMESTAMP, #{productId})
+    <insert id="insert" parameterType="review" useGeneratedKeys="true" keyProperty="reviewId" keyColumn="review_id">
+        INSERT INTO review (title, content, file_name, file_type, file_data, writer, written_at, product_id)
+        VALUES (#{title}, #{content}, #{fileName}, #{fileType}, #{fileData}, #{writer}, CURRENT_TIMESTAMP, #{productId})
     </insert>
 
-    <select id="selectById" resultType="board">
-        SELECT board_id, title, content, writer, writed_at, product_id
-        FROM board
-        WHERE board_id = #{boardId}
+    <select id="selectById" resultType="review">
+        SELECT review_id, title, content, file_name, file_type, file_data, writer, written_at, product_id
+        FROM review
+        WHERE review_id = #{reviewId}
     </select>
 
     <!-- where: title/content substring search; writer/productId exact match -->
@@ -35,30 +35,31 @@
     </sql>
 
     <select id="selectCount" resultType="_int">
-        SELECT COUNT(*) FROM board
+        SELECT COUNT(*) FROM review
         <include refid="searchCondition" />
     </select>
 
-    <select id="selectPage" resultType="board">
-        SELECT board_id, title, content, writer, writed_at, product_id
-        FROM board
+    <select id="selectPage" resultType="review">
+        SELECT review_id, title, writer, file_name, written_at, product_id
+        FROM review
         <include refid="searchCondition" />
-        ORDER BY board_id DESC
+        ORDER BY review_id DESC
         LIMIT #{pager.rowsPerPage} OFFSET #{pager.startRowIndex}
     </select>
 
     <update id="update">
-        UPDATE board
-        SET title = #{board.title},
-            content = #{board.content},
-            writer = #{board.writer},
-            product_id = #{board.productId}
-        WHERE board_id = #{board.boardId}
+        UPDATE review
+        SET title = #{review.title},
+            content = #{review.content},
+            file_name = #{review.fileName},
+            file_type = #{review.fileType},
+            file_data = #{review.fileData}
+        WHERE review_id = #{review.reviewId}
     </update>
 
     <delete id="deleteById">
-        DELETE FROM board
-        WHERE board_id = #{boardId}
+        DELETE FROM review
+        WHERE review_id = #{reviewId}
     </delete>
 
 </mapper>

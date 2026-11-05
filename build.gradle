@@ -7,6 +7,10 @@ plugins {
 group = 'com.mycompany'
 version = '0.0.1-SNAPSHOT'
 
+springBoot {
+	mainClass = 'com.mycompany.demo.BackEndApplication'
+}
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
@@ -23,7 +27,7 @@ dependencies {
 	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5'
 
 	// PostgreSQL JDBC 드라이버 의존성 추가
-	runtimeOnly 'org.postgresql:postgresql'
+	implementation 'org.postgresql:postgresql'
 	compileOnly 'org.projectlombok:lombok:1.18.38'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	annotationProcessor 'org.projectlombok:lombok:1.18.38'

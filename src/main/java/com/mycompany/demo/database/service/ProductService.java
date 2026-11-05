@@ -1,13 +1,13 @@
-﻿package com.mycompany.demo.database.service;
+package com.mycompany.demo.database.service;
 
 import java.util.List;
 import java.util.Map;
 
-import com.mycompany.demo.database.dao.BoardDao;
+import com.mycompany.demo.database.dao.ReviewDao;
 import com.mycompany.demo.database.dao.ProductDao;
 import com.mycompany.demo.database.dao.SellerDao;
 import com.mycompany.demo.database.dto.Pager;
-import com.mycompany.demo.database.entity.Board;
+import com.mycompany.demo.database.entity.Review;
 import com.mycompany.demo.database.entity.Product;
 import com.mycompany.demo.database.entity.Seller;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class ProductService {
     private final ProductDao productDao;
     private final SellerDao sellerDao;
-    private final BoardDao boardDao;
+    private final ReviewDao reviewDao;
 
     // ---------- Seller ----------
 
@@ -54,26 +54,26 @@ public class ProductService {
         return sellerDao.selectCount(where);
     }
 
-    // ---------- Board ----------
+    // ---------- Review ----------
 
     // 게시글 조회
-    public Board getBoard(long boardId) {
-        return boardDao.selectById(boardId);
+    public Review getReview(long reviewId) {
+        return reviewDao.selectById(reviewId);
     }
 
     // 게시글 등록
-    public int writeBoard(Board board) {
-        return boardDao.insert(board);
+    public int writeReview(Review review) {
+        return reviewDao.insert(review);
     }
 
     // 게시글 수정
-    public int updateBoard(Board board) {
-        return boardDao.update(board);
+    public int updateReview(Review review) {
+        return reviewDao.update(review);
     }
 
     // 게시글 삭제
-    public int deleteBoard(String boardId) {
-        return boardDao.deleteById(boardId);
+    public int deleteReview(long reviewId) {
+        return reviewDao.deleteById(reviewId);
     }
 
     // ---------- Product ----------

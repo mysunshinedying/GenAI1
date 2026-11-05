@@ -1,4 +1,4 @@
-﻿package com.mycompany.demo.database.service;
+package com.mycompany.demo.database.service;
 
 import java.util.List;
 import java.util.Map;
