@@ -25,6 +25,10 @@ public class ReviewService {
         return reviewDao.selectPage(pager, where);
     }
 
+    public Review getReview(long reviewId) {
+        return reviewDao.selectById(reviewId);
+    }
+
     public int write(Review review) {
         return reviewDao.insert(review);
     }

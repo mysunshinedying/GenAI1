@@ -5,19 +5,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mycompany.demo.database.dto.Pager;
+import com.mycompany.demo.database.dto.ReviewDetailResponse;
+import com.mycompany.demo.database.dto.ReviewListItemResponse;
 import com.mycompany.demo.database.dto.ReviewWriteRequest;
 import com.mycompany.demo.database.dto.ReviewWriteResponse;
-import com.mycompany.demo.database.dto.ReviewListItemResponse;
-import com.mycompany.demo.database.dto.Pager;
 import com.mycompany.demo.database.entity.Review;
 import com.mycompany.demo.database.service.ReviewService;
 
@@ -26,10 +30,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/review")
-@Slf4j 
-@RequiredArgsConstructor 
+@Slf4j
+@RequiredArgsConstructor
 public class ReviewController {
-    
+
     private final ReviewService reviewService;
 
     @PostMapping(value = "/write", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -56,7 +60,7 @@ public class ReviewController {
             review.setFileData(reviewWriteRequest.getFile().getBytes());
         }
         review.setWriter(reviewWriteRequest.getWriter());
-        review.setProductId(reviewWriteRequest.getProductId());        
+        review.setProductId(reviewWriteRequest.getProductId());
 
         // productId가 DTO에 바인딩되지 않아 우선 매핑 보류
 
@@ -105,6 +109,49 @@ public class ReviewController {
         return map;
     }
 
-    
+    @GetMapping("/detail")
+    public ReviewDetailResponse detail(@RequestParam("reviewId") long reviewId) {
+        Review dbReview = reviewService.getReview(reviewId);
+        if (dbReview == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "후기를 찾을 수 없습니다.");
+        }
+
+        ReviewDetailResponse response = new ReviewDetailResponse();
+        response.setReviewId(dbReview.getReviewId());
+        response.setTitle(dbReview.getTitle());
+        response.setContent(dbReview.getContent());
+        response.setWriter(dbReview.getWriter());
+        response.setProductId(dbReview.getProductId());
+        response.setFileName(dbReview.getFileName());
+        response.setFileType(dbReview.getFileType());
+        response.setWrittenAt(dbReview.getWrittenAt());
+
+        return response;
+    }
+
+    @GetMapping("/file")
+    public ResponseEntity<byte[]> getFile(@RequestParam("reviewId") long reviewId) {
+        Review review = reviewService.getReview(reviewId);
+        if (review == null || review.getFileData() == null || review.getFileData().length == 0) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Review attachment not found");
+        }
+
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        if (review.getFileType() != null) {
+            try {
+                mediaType = MediaType.parseMediaType(review.getFileType());
+            } catch (IllegalArgumentException ignored) {
+                // Fall back to the generic binary media type for invalid stored values.
+            }
+        }
+
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header("Content-Disposition", "inline")
+                .body(review.getFileData());
+    }
+
+
+
 
 }

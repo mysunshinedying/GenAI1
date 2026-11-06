@@ -26,7 +26,7 @@ export default function Exam01Review() {
   return (
     <section className="m-6 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
       <header className="border-b border-gray-200 bg-gray-50 px-5 py-3">
-        <h1 className="text-lg font-semibold">리뷰 목록</h1>
+        <h1 className="text-lg font-semibold text-gray-900">리뷰 목록</h1>
       </header>
       <div className="p-5">
         <div className="mb-3 flex items-center justify-between">
@@ -35,7 +35,7 @@ export default function Exam01Review() {
           </p>
           <Link
             href="/Ch08RestAPI/Exam01Review/ReviewWrite"
-            className="rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="rounded bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
           >
             글쓰기
           </Link>
@@ -43,7 +43,7 @@ export default function Exam01Review() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[900px] table-auto border-collapse text-left text-sm">
             <thead>
-              <tr className="border-b border-gray-200 bg-gray-50 text-center text-gray-600">
+              <tr className="border-b border-orange-100 bg-orange-50 text-center text-orange-900">
                 <th className="w-px whitespace-nowrap px-3 py-2">번호</th>
                 <th className="px-3 py-2">제목</th>
                 <th className="w-px whitespace-nowrap px-3 py-2">작성자</th>
@@ -54,12 +54,16 @@ export default function Exam01Review() {
             </thead>
             <tbody className="text-center">
               {reviews.map((review) => (
-                <tr key={review.reviewId} className="border-b border-gray-100">
+                <tr key={review.reviewId} className="border-b border-gray-100 transition-colors hover:bg-gray-50">
                   <td className="w-px whitespace-nowrap px-3 py-2">{review.reviewId}</td>
                   <td className="px-3 py-2 text-left">
-                    <div className="truncate" title={review.title}>
+                    <Link
+                      href={`/Ch08RestAPI/Exam01Review/ReviewDetail?reviewId=${review.reviewId}`}
+                      className="block w-full truncate rounded px-2 py-1 text-orange-700"
+                      title={review.title}
+                    >
                       {review.title}
-                    </div>
+                    </Link>
                   </td>
                   <td className="w-px whitespace-nowrap px-3 py-2">{review.writer}</td>
                   <td className="w-px whitespace-nowrap px-3 py-2">
@@ -69,7 +73,14 @@ export default function Exam01Review() {
                   </td>
                   <td className="w-px whitespace-nowrap px-3 py-2">{review.productId}</td>
                   <td className="w-px whitespace-nowrap px-3 py-2">
-                    {review.fileName ? "📎" : "-"}
+                    {review.fileName ? (
+                      <span title={review.fileName} aria-label={`첨부 파일: ${review.fileName}`} className="inline-flex text-orange-600">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className="h-5 w-5" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 3H6.75A1.75 1.75 0 0 0 5 4.75v14.5A1.75 1.75 0 0 0 6.75 21h10.5A1.75 1.75 0 0 0 19 19.25V9l-6-6Z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13 3v6h6M8 13h8M8 16.5h8" />
+                        </svg>
+                      </span>
+                    ) : "-"}
                   </td>
                 </tr>
               ))}
@@ -116,7 +127,7 @@ export default function Exam01Review() {
                 aria-current={pager.pageNo === number ? "page" : undefined}
                 className={`rounded border px-3 py-1.5 text-sm ${
                   pager.pageNo === number
-                    ? "border-blue-600 bg-blue-600 text-white"
+                    ? "border-orange-600 bg-orange-600 text-white"
                     : "cursor-pointer hover:bg-gray-100"
                 }`}
               >
