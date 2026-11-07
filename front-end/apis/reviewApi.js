@@ -16,12 +16,15 @@ export async function reviewDetail(reviewId) {
   })
 }
 
-export async function reviewUpdate(review) {
-  return await api.put("/database/review/update-review", review);
+export async function reviewUpdate(formData) {
+  return await api.put("/review/update", formData);
 }
 
 export function getReviewFileUrl(reviewId) {
-  return `${api.defaults.baseURL}/review/file?reviewId=${encodeURIComponent(reviewId)}`;
+  return api.getUri({
+    url: "/review/file",
+    params: { reviewId },
+  });
 }
 
 //

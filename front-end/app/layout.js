@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AppHeader from "@/app/AppHeader";
@@ -32,7 +33,11 @@ export default function RootLayout({ children }) {
           <ColorContextProvider>
             <div className="flex flex-1">
               <AppMenu />
-              <div className="flex min-w-0 flex-1 flex-col p-4">{children}</div>
+              <div className="flex min-w-0 flex-1 flex-col p-4">
+                <Suspense fallback={<div className="p-4 text-sm text-zinc-500">페이지를 불러오는 중...</div>}>
+                  {children}
+                </Suspense>
+              </div>
             </div>
           </ColorContextProvider>
         </AuthContextProvider>

@@ -19,4 +19,5 @@ public class Review {
     private String writer;
     private Date writtenAt;
     private long productId;
+    private boolean deleteFile;
 }

@@ -18,4 +18,5 @@ public class ReviewDetailResponse {
     private String fileName;
     private String fileType;
     private Date writtenAt;
+    private boolean deleteFile;
 }

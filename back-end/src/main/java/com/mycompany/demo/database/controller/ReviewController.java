@@ -1,25 +1,31 @@
 package com.mycompany.demo.database.controller;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.mycompany.demo.database.dto.Pager;
 import com.mycompany.demo.database.dto.ReviewDetailResponse;
 import com.mycompany.demo.database.dto.ReviewListItemResponse;
+import com.mycompany.demo.database.dto.ReviewUpdateRequest;
+import com.mycompany.demo.database.dto.ReviewUpdateResponse;
 import com.mycompany.demo.database.dto.ReviewWriteRequest;
 import com.mycompany.demo.database.dto.ReviewWriteResponse;
 import com.mycompany.demo.database.entity.Review;
@@ -61,8 +67,7 @@ public class ReviewController {
         }
         review.setWriter(reviewWriteRequest.getWriter());
         review.setProductId(reviewWriteRequest.getProductId());
-
-        // productId가 DTO에 바인딩되지 않아 우선 매핑 보류
+        // productId mapping is pending because the DTO does not bind it.
 
 
         reviewService.write(review);
@@ -113,7 +118,7 @@ public class ReviewController {
     public ReviewDetailResponse detail(@RequestParam("reviewId") long reviewId) {
         Review dbReview = reviewService.getReview(reviewId);
         if (dbReview == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "후기를 찾을 수 없습니다.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "?�기�?찾을 ???�습?�다.");
         }
 
         ReviewDetailResponse response = new ReviewDetailResponse();
@@ -130,28 +135,51 @@ public class ReviewController {
     }
 
     @GetMapping("/file")
-    public ResponseEntity<byte[]> getFile(@RequestParam("reviewId") long reviewId) {
+    public ResponseEntity<byte[]> file(@RequestParam("reviewId") long reviewId) {
         Review review = reviewService.getReview(reviewId);
-        if (review == null || review.getFileData() == null || review.getFileData().length == 0) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Review attachment not found");
+        if (review == null || review.getFileData() == null) {
+            return ResponseEntity.notFound().build();
         }
+        //응답 본문에 있는 데이터의 타입을 설정(MediaType)
+        String type = review.getFileType();  // image/jpeg, image/png, ... (MIME Type)
+        MediaType mediaType = MediaType.parseMediaType(type);
 
-        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
-        if (review.getFileType() != null) {
-            try {
-                mediaType = MediaType.parseMediaType(review.getFileType());
-            } catch (IllegalArgumentException ignored) {
-                // Fall back to the generic binary media type for invalid stored values.
-            }
-        }
 
+        // 브라우저가 다운로드할 파일 이름을 설정
+        String fileName = review.getFileName();
+        String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replace("+", "%20");
+        String disposition = "attachment; filename*=UTF-8''" + encodedFileName;
+
+        // 200 응답
         return ResponseEntity.ok()
-                .contentType(mediaType)
-                .header("Content-Disposition", "inline")
+                .contentType(mediaType) // Content-Type: image/jpeg
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition) //Content-Disposition: attachment; filename*=UTF-8''encodedFileName
+                //.header("Content-Type", type)
                 .body(review.getFileData());
     }
 
+    @PutMapping("/update")
+    public ReviewUpdateResponse update(@ModelAttribute ReviewUpdateRequest reviewUpdateRequest) throws IOException {
+        MultipartFile file = reviewUpdateRequest.getFile();
 
+        Review review = new Review();
+        review.setReviewId(reviewUpdateRequest.getReviewId());
+        review.setTitle(reviewUpdateRequest.getTitle());
+        review.setContent(reviewUpdateRequest.getContent());
 
+        if (reviewUpdateRequest.isDeleteFile()) {
+            review.setDeleteFile(true);
+        }
+
+        if (reviewUpdateRequest.getFile() != null && !reviewUpdateRequest.getFile().isEmpty()) {
+            review.setFileName(reviewUpdateRequest.getFile().getOriginalFilename());
+            review.setFileType(reviewUpdateRequest.getFile().getContentType());
+            review.setFileData(reviewUpdateRequest.getFile().getBytes());
+        }
+
+        reviewService.update(review);
+
+        return new ReviewUpdateResponse("success", "Review updated successfully");
+    }
 
 }

@@ -1,234 +1,169 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import { reviewDetail, reviewUpdate } from "@/apis/reviewApi";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense, useRef, useState, useEffect } from "react";
+import { reviewDetail, reviewUpdate } from "@/apis/reviewApi"
 
-export default function ReviewUpdate() {
+function ReviewUpdateForm() {
+  // ReviewDetail이 보낸 데이터 받기
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const reviewId = searchParams.get("reviewId");
-  const [review, setReview] = useState({
-    reviewId: "",
-    title: "",
-    content: "",
+
+  const reviewId = useSearchParams().get("reviewId");
+  const [errors, setErrors] = useState({});
+  // DOM 참조: <input type="file">
+  const fileInputRef = useRef(null);
+  // 사용자가 선택한 파일 이름을 저장하는 상태
+  const [selectedFileName, setSelectedFileName] = useState("");
+  // ReviewDetail로 돌아가기 위한 경로
+  const detailUrl = `/Ch08RestAPI/Exam01Review/ReviewDetail?reviewId=${reviewId}`;
+
+  const validateTitle = (value) => {
+    if (!value.trim()) return "제목을 입력해 주세요.";
+    if (value.length > 200) return "제목은 200자 이하로 입력해 주세요.";
+    return "";
+  };
+
+  const validateContent = (value) => {
+    return value.trim() ? "" : "내용을 입력해 주세요.";
+  };
+
+
+  const [updateForm, setUpdateForm] = useState({
     writer: "",
     productId: "",
+    title: "",
+    content: "",
     fileName: "",
+    deleteFile: false,
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [isCurrentFileRemoved, setIsCurrentFileRemoved] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const fileInputRef = useRef(null);
+
 
   useEffect(() => {
-    let isActive = true;
+    // reviewId가 바뀔 때마다 updateForm의 데이터를 가져온다
+    if (reviewId) {
 
-    if (!reviewId) {
-      setIsLoading(false);
-      setErrorMessage("후기 번호가 없습니다.");
-      return () => {
-        isActive = false;
+      const work = async () => {
+        try {
+          const response = await reviewDetail(reviewId);
+          console.log(response.data);
+          setUpdateForm(response.data);
+        } catch (error) {
+          console.error(error);
+        }
       };
+      work();
     }
+  }, [reviewId])
 
-    const loadReview = async () => {
-      try {
-        const response = await reviewDetail(reviewId);
-        if (isActive) {
-          setReview(response.data);
-        }
-      } catch (error) {
-        console.error("후기 정보를 불러오지 못했습니다.", error);
-        if (isActive) {
-          setErrorMessage("후기 정보를 불러오지 못했습니다.");
-        }
-      } finally {
-        if (isActive) {
-          setIsLoading(false);
-        }
-      }
+
+  // 제출 버튼을 클릭했을 때 호출
+  const handleSubmit = async () => {
+    // 유효성 검사
+    const nextErrors = {
+      title: validateTitle(updateForm.title),
+      content: validateContent(updateForm.content),
     };
-
-    loadReview();
-    return () => {
-      isActive = false;
-    };
-  }, [reviewId]);
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setReview((previousReview) => ({ ...previousReview, [name]: value }));
-  };
-
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files?.[0] ?? null);
-  };
-
-  const clearSelectedFile = () => {
-    setSelectedFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setErrorMessage("");
-
-    if (!review.title.trim()) {
-      setErrorMessage("제목을 입력해 주세요.");
+    setErrors(nextErrors);
+    const firstInvalidField = Object.keys(nextErrors).find((name) => nextErrors[name]);
+    if (firstInvalidField) {
+      document.getElementById(firstInvalidField)?.focus();
       return;
     }
-    if (!review.content.trim()) {
-      setErrorMessage("내용을 입력해 주세요.");
-      return;
+
+    const formData = new FormData();
+    formData.append("reviewId", reviewId);
+    formData.append("title", updateForm.title);
+    formData.append("content", updateForm.content);
+    if (fileInputRef.current.files[0]) {
+      formData.append("file", fileInputRef.current.files[0]);
     }
+      formData.append("deleteFile", updateForm.deleteFile);
 
     try {
-      setIsSubmitting(true);
-      await reviewUpdate({
-        reviewId: review.reviewId,
-        title: review.title,
-        content: review.content,
-      });
-      router.push(`/Ch08RestAPI/Exam01Review/ReviewDetail?reviewId=${review.reviewId}`);
+      await reviewUpdate(formData);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      setSelectedFileName("");
+      router.push(detailUrl);
     } catch (error) {
-      console.error("후기 수정에 실패했습니다.", error);
-      setErrorMessage("후기 수정에 실패했습니다. 잠시 후 다시 시도해 주세요.");
-      setIsSubmitting(false);
+      console.error(error);
     }
+
   };
-
-  if (isLoading) {
-    return <p className="p-6 text-sm text-zinc-500">후기 정보를 불러오는 중입니다.</p>;
-  }
-
-  if (errorMessage && !review.reviewId) {
-    return <p className="p-6 text-sm text-red-600">{errorMessage}</p>;
-  }
 
   return (
     <section className="min-w-0 w-full rounded-lg border border-zinc-200 bg-white text-zinc-900 shadow-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100">
       <header className="rounded-t-lg border-b border-zinc-200 bg-zinc-100 px-4 py-1 dark:border-zinc-700 dark:bg-zinc-800">
         <h2 className="font-semibold">ReviewUpdate</h2>
       </header>
-      <div className="bg-zinc-50/60 p-4 sm:p-8 dark:bg-zinc-950/30">
+      <div className="bg-zinc-50/60 p-4 sm:p-6 dark:bg-zinc-950/30">
         <div className="mx-auto max-w-[800px]">
-          <div className="mb-6 border-l-4 border-orange-500 pl-4">
-            <p className="text-xs font-semibold tracking-widest text-orange-600 dark:text-orange-400">REVIEW</p>
-            <h3 className="mt-1 text-2xl font-bold tracking-tight">상품 후기 수정</h3>
-            <p className="mt-2 text-sm leading-6 text-zinc-500 dark:text-zinc-400">작성한 후기 내용을 수정해 주세요.</p>
+          <div className="mb-5 flex items-start justify-between gap-3">
+            <div className="border-l-4 border-orange-500 pl-4">
+              <p className="text-xs font-semibold tracking-widest text-orange-600 dark:text-orange-400">EDIT REVIEW</p>
+              <h3 className="mt-1 text-xl font-bold">상품 후기 수정</h3>
+              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">사용하면서 달라진 생각이나 새로운 이야기를 더해 보세요.</p>
+            </div>
+            <span className="shrink-0 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900">#{reviewId || "-"}</span>
           </div>
-
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:grid-cols-2 dark:border-zinc-700 dark:bg-zinc-900">
-            <div className="sm:col-span-2">
+          <div className="space-y-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+            <dl className="flex flex-wrap gap-x-8 gap-y-2 rounded-lg bg-zinc-50 px-4 py-3 text-xs dark:bg-zinc-800/50">
+              <div className="flex gap-2"><dt className="text-zinc-500">글쓴이</dt><dd className="font-semibold">{updateForm.writer}</dd></div>
+              <div className="flex gap-2"><dt className="text-zinc-500">상품 번호</dt><dd className="font-semibold">{updateForm.productId}</dd></div>
+            </dl>
+            <div>
               <label htmlFor="title" className="mb-1 block text-sm font-semibold">제목</label>
-              <input
-                id="title"
-                name="title"
-                type="text"
-                value={review.title}
-                onChange={handleChange}
-                maxLength={200}
-                required
-                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none transition focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-100 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:bg-zinc-800 dark:focus:ring-orange-900/40"
-              />
+              <input value={updateForm.title} onChange={(e) => setUpdateForm({ ...updateForm, title: e.target.value })} id="title" aria-invalid={Boolean(errors.title)} aria-describedby={errors.title ? "title-error" : undefined} name="title" required maxLength={200} placeholder="후기를 한 줄로 요약해 주세요" className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:ring-orange-900/40" />
+              {errors.title && <p id="title-error" role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.title}</p>}
             </div>
-
-            <div className="sm:col-span-2">
+            <div>
               <label htmlFor="content" className="mb-1 block text-sm font-semibold">내용</label>
-              <textarea
-                id="content"
-                name="content"
-                value={review.content}
-                onChange={handleChange}
-                rows={8}
-                required
-                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm leading-6 outline-none transition focus:border-orange-400 focus:bg-white focus:ring-2 focus:ring-orange-100 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:bg-zinc-800 dark:focus:ring-orange-900/40"
-              />
+              <textarea value={updateForm.content} onChange={(e) => setUpdateForm({ ...updateForm, content: e.target.value })} id="content" aria-invalid={Boolean(errors.content)} aria-describedby={errors.content ? "content-error" : undefined} name="content" required rows={6} placeholder="상품에 대한 솔직한 후기를 남겨 주세요" className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm leading-6 outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:ring-orange-900/40" />
+              {errors.content && <p id="content-error" role="alert" className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.content}</p>}
             </div>
-
-            <div>
-              <label htmlFor="writer" className="mb-1 block text-sm font-semibold">글쓴이</label>
-              <input id="writer" value={review.writer || "-"} readOnly className="w-full rounded-lg border border-zinc-200 bg-zinc-100 px-3 py-2 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400" />
-            </div>
-            <div>
-              <label htmlFor="productId" className="mb-1 block text-sm font-semibold">상품 번호</label>
-              <input id="productId" value={review.productId ?? "-"} readOnly className="w-full rounded-lg border border-zinc-200 bg-zinc-100 px-3 py-2 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400" />
-            </div>
-
-            <div className="sm:col-span-2 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 p-4 dark:border-zinc-600 dark:bg-zinc-800/40">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="text-sm font-semibold">첨부파일 관리</p>
-                  <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">기존 파일을 삭제하거나 새 파일로 바꿀 수 있습니다.</p>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="min-w-0 rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-700 dark:bg-zinc-800/40">
+                <h4 className="mb-2 text-sm font-semibold">현재 파일</h4>
+                <div className="flex items-center justify-between gap-2">
+                  <p aria-live="polite" className="min-w-0 break-all text-xs text-zinc-500 dark:text-zinc-400">
+                    {updateForm.fileName ? updateForm.fileName : "첨부파일이 없습니다."}
+                  </p>
+                  {updateForm.fileName && (
+                    <label className="flex shrink-0 items-center gap-2 text-xs text-red-600 dark:text-red-400">
+                      <input
+                        type="checkbox"
+                        checked={updateForm.deleteFile}
+                        onChange={(event) => setUpdateForm({ ...updateForm, deleteFile: event.target.checked })}
+                      />
+                      현재 파일 삭제
+                    </label>
+                  )}
                 </div>
-                {review.fileName && !isCurrentFileRemoved && (
-                  <button
-                    type="button"
-                    onClick={() => setIsCurrentFileRemoved(true)}
-                    className="cursor-pointer rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40"
-                  >
-                    기존 파일 삭제
-                  </button>
-                )}
-                {review.fileName && isCurrentFileRemoved && (
-                  <button
-                    type="button"
-                    onClick={() => setIsCurrentFileRemoved(false)}
-                    className="cursor-pointer rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium transition hover:bg-zinc-100 dark:border-zinc-600 dark:hover:bg-zinc-800"
-                  >
-                    삭제 취소
-                  </button>
-                )}
               </div>
-
-              <div className="mt-3 rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-                <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">현재 파일</p>
-                <p className={`mt-1 break-all text-sm ${isCurrentFileRemoved ? "text-red-500 line-through" : ""}`}>
-                  {review.fileName
-                    ? isCurrentFileRemoved ? `${review.fileName} (삭제 예정)` : review.fileName
-                    : "첨부파일이 없습니다."}
-                </p>
-              </div>
-
-              <div className="mt-3">
-                <label htmlFor="replacementFile" className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-300">새 파일 선택</label>
-                <input
-                  ref={fileInputRef}
-                  id="replacementFile"
-                  type="file"
-                  onChange={handleFileChange}
-                  className="block w-full text-sm file:mr-3 file:cursor-pointer file:rounded-lg file:border-0 file:bg-white file:px-4 file:py-2 file:font-medium file:text-orange-600 dark:file:bg-zinc-800 dark:file:text-zinc-100"
-                />
-                {selectedFile && (
-                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-orange-50 px-3 py-2 text-sm dark:bg-orange-950/30">
-                    <span className="break-all text-orange-800 dark:text-orange-200">선택한 파일: {selectedFile.name}</span>
-                    <button type="button" onClick={clearSelectedFile} className="cursor-pointer text-xs font-medium text-zinc-600 underline dark:text-zinc-300">
-                      선택 취소
-                    </button>
-                  </div>
-                )}
+              <div className="min-w-0 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 p-4 dark:border-zinc-600 dark:bg-zinc-800/40">
+                <h4 className="mb-2 text-sm font-semibold">📎 첨부파일 변경</h4>
+                <input ref={fileInputRef} id="file" name="file" type="file" hidden onChange={(event) => setSelectedFileName(event.target.files[0]?.name || "")} />
+                <div className="flex min-w-0 items-center gap-2">
+                  <button type="button" onClick={() => fileInputRef.current?.click()} className="shrink-0 rounded-lg border border-orange-200 bg-white px-3 py-1.5 text-xs font-semibold text-orange-600 hover:bg-orange-50 dark:border-orange-900 dark:bg-zinc-800 dark:text-orange-300 dark:hover:bg-zinc-700">
+                    선택
+                  </button>
+                  <span aria-live="polite" className="min-w-0 break-all text-xs text-zinc-500 dark:text-zinc-400">{selectedFileName}</span>
+                </div>
               </div>
             </div>
-
-            {errorMessage && <p role="alert" className="text-sm text-red-600 dark:text-red-400 sm:col-span-2">{errorMessage}</p>}
-
-            <div className="flex flex-wrap items-center justify-end gap-3 border-t border-zinc-100 pt-3 sm:col-span-2 dark:border-zinc-800">
-              <Link href={`/Ch08RestAPI/Exam01Review/ReviewDetail?reviewId=${review.reviewId}`} className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium transition hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-orange-500 dark:border-zinc-600 dark:hover:bg-zinc-800">
-                취소
-              </Link>
-              <button type="submit" disabled={isSubmitting} className="cursor-pointer rounded-lg bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-orange-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500 disabled:cursor-not-allowed disabled:opacity-60">
-                {isSubmitting ? "저장 중..." : "수정 완료"}
-              </button>
+            <div className="flex justify-end gap-2 border-t border-zinc-100 pt-4 dark:border-zinc-800">
+              <Link href={detailUrl} className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs hover:bg-zinc-100 dark:border-zinc-600 dark:hover:bg-zinc-800">취소</Link>
+              <button type="button" onClick={handleSubmit} className="rounded-lg bg-orange-500 px-4 py-1.5 text-xs font-semibold text-white hover:bg-orange-600">수정 저장</button>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </section>
   );
+}
+
+export default function ReviewUpdate() {
+  return <Suspense fallback={<p className="p-4 text-sm">수정 화면을 준비하고 있습니다…</p>}><ReviewUpdateForm /></Suspense>;
 }

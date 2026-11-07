@@ -32,5 +32,9 @@ public class ReviewService {
     public int write(Review review) {
         return reviewDao.insert(review);
     }
+    
+    public int update(Review review) {
+        return reviewDao.update(review);
+    }
 
 }

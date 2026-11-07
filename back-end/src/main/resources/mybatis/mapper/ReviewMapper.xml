@@ -49,11 +49,22 @@
 
     <update id="update">
         UPDATE review
-        SET title = #{review.title},
+        <set>
+            title = #{review.title},
             content = #{review.content},
-            file_name = #{review.fileName},
-            file_type = #{review.fileType},
-            file_data = #{review.fileData}
+            <choose>
+                <when test="review.fileName != null and review.fileName != ''">
+                    file_name = #{review.fileName},
+                    file_type = #{review.fileType},
+                    file_data = #{review.fileData},
+                </when>
+                <when test="review.deleteFile">
+                    file_name = NULL,
+                    file_type = NULL,
+                    file_data = NULL,
+                </when>
+            </choose>
+        </set>
         WHERE review_id = #{review.reviewId}
     </update>
 
