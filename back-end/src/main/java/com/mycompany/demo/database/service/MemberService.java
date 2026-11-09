@@ -1,5 +1,5 @@
 package com.mycompany.demo.database.service;
-
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +25,8 @@ public class MemberService {
     }
 
     public void join(Member member) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        member.setPassword(passwordEncoder.encode(member.getPassword()));
         memberDao.insert(member);
     }
 
@@ -42,5 +44,18 @@ public class MemberService {
 
     public int pagingTotalRows(Map<String, Object> where) {
         return memberDao.selectCount(where);
+    }
+
+    public String login(Member member) {
+        Member dbMember = memberDao.selectById(member.getMemberId());
+        if(dbMember != null) {
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            if(passwordEncoder.matches(member.getPassword(), dbMember.getPassword())) {
+                return "success";
+            } else {
+                return "wrongPassword";
+            }
+        }
+        return "wrongmemberId";
     }
 }

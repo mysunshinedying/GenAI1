@@ -11,10 +11,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.mycompany.demo.database.dto.Pager;
+import com.mycompany.demo.database.dto.ReviewDeleteResponse;
 import com.mycompany.demo.database.dto.ReviewDetailResponse;
 import com.mycompany.demo.database.dto.ReviewListItemResponse;
 import com.mycompany.demo.database.dto.ReviewUpdateRequest;
@@ -30,6 +33,7 @@ import com.mycompany.demo.database.dto.ReviewWriteRequest;
 import com.mycompany.demo.database.dto.ReviewWriteResponse;
 import com.mycompany.demo.database.entity.Review;
 import com.mycompany.demo.database.service.ReviewService;
+import com.mycompany.demo.jwt.service.JwtService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final JwtService jwtService;
 
     @PostMapping(value = "/write", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ReviewWriteResponse write(@ModelAttribute ReviewWriteRequest reviewWriteRequest) throws IOException {
@@ -114,12 +119,22 @@ public class ReviewController {
         return map;
     }
 
-    @GetMapping("/detail")
-    public ReviewDetailResponse detail(@RequestParam("reviewId") long reviewId) {
+    @GetMapping(value = "/detail", headers = "Authorization")
+    public ReviewDetailResponse detail(@RequestParam("reviewId") long reviewId, @RequestHeader("Authorization") String authorization) {
         Review dbReview = reviewService.getReview(reviewId);
         if (dbReview == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "?�기�?찾을 ???�습?�다.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "리뷰를 찾을 수 없습니다.");
         }
+
+
+        String token = authorization.substring(7); // "Bearer " 이후의 토큰만 추출
+        boolean isValid = jwtService.validateJwt(token); // 토큰 유효성 검사
+
+        if (!isValid) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.");
+        }
+
+        Map<String, String> claims = jwtService.getClaims(token);
 
         ReviewDetailResponse response = new ReviewDetailResponse();
         response.setReviewId(dbReview.getReviewId());
@@ -180,6 +195,12 @@ public class ReviewController {
         reviewService.update(review);
 
         return new ReviewUpdateResponse("success", "Review updated successfully");
+    }
+
+    @DeleteMapping("/delete")
+    public ReviewDeleteResponse delete(@RequestParam("reviewId") long reviewId) {
+        reviewService.delete(reviewId);
+        return new ReviewDeleteResponse("success", "Review deleted successfully");
     }
 
 }

@@ -37,4 +37,8 @@ public class ReviewService {
         return reviewDao.update(review);
     }
 
+    public void delete(long reviewId) {
+        reviewDao.deleteById(reviewId);
+    }
+
 }

@@ -47,7 +47,7 @@ public class JwtService  {
         return jwt;
     }
 
-    public void validateJwt(String jwt) {
+    public boolean validateJwt(String jwt) {
             // jwt parser 생성
             JwtParser jwtParser = Jwts.parser()
                     .verifyWith(secretKey)
@@ -55,6 +55,8 @@ public class JwtService  {
 
             // JWT를 해석해서 claim을 생성
             Jws<Claims> jws = jwtParser.parseSignedClaims(jwt);
+
+            return true;
         }
 
     public Map<String, String> getClaims(String jwt) {

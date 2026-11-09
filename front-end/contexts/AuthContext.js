@@ -19,6 +19,8 @@ export const AuthContextProvider = ({children}) => {
             if (savedAccessToken) {
                 setAccessToken(savedAccessToken);
             }
+
+            
         } catch (error) {
             console.error('인증 정보를 localStorage에서 불러오지 못했습니다.', error);
         } finally {

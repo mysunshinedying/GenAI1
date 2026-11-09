@@ -1,10 +1,11 @@
 "use client";
 
-import { getReviewFileUrl, reviewDetail } from "@/apis/reviewApi";
+import {getReviewFileUrl, reviewDelete, reviewDetail} from "@/apis/reviewApi";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import {useRouter, useSearchParams} from "next/navigation";
 import { useEffect, useState } from "react";
+import api from "@/apis/axios";
 
 export default function ReviewDetail() {
     const searchParams = useSearchParams();
@@ -17,8 +18,10 @@ export default function ReviewDetail() {
         productId: "",
         fileName: "",
         fileType: "",
-        writedAt: "",
+        writtenAt: "",
     });
+
+
 
     useEffect(() => {
         const work = async () => {
@@ -27,11 +30,31 @@ export default function ReviewDetail() {
                 const response = await reviewDetail(reviewId);
                 setReview(response.data);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         };
         work();
     }, [reviewId]);
+
+    const router = useRouter();
+
+    const handleDelete = async () => {
+
+        const isDelete = confirm("삭제하시겠습니까?")
+        if(!isDelete) {
+            return;
+
+        }
+
+        try {
+            reviewDelete(reviewId);
+            router.push('/Ch08RestAPI/Exam01Review');
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
 
     return (
         <section className="min-w-0 w-full rounded-lg border border-zinc-200 bg-white text-zinc-900 shadow-sm dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100">
@@ -95,7 +118,7 @@ export default function ReviewDetail() {
                             <Link href={`/Ch08RestAPI/Exam01Review/ReviewUpdate?reviewId=${review.reviewId}`} className="rounded-lg border border-zinc-300 px-4 py-2 text-xs font-semibold transition hover:bg-zinc-100 dark:border-zinc-600 dark:hover:bg-zinc-800">
                                 수정하기
                             </Link>
-                            <button type="button" className="rounded-lg border border-red-200 px-4 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40 cursor-pointer">
+                            <button type="button" onClick={handleDelete}  className="rounded-lg border border-red-200 px-4 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40 cursor-pointer">
                                 삭제하기
                             </button>
                         </div>

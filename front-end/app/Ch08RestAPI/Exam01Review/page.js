@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
+import { AuthContext } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { getReviewList } from "@/apis/reviewApi";
 
@@ -8,6 +9,7 @@ export default function Exam01Review() {
   const [reviews, setReviews] = useState([]);
   const [pager, setPager] = useState(null);
   const [pageNo, setPageNo] = useState(1);
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
     const loadReviews = async () => {
@@ -33,12 +35,13 @@ export default function Exam01Review() {
           <p className="text-sm text-gray-600">
             {pager ? `전체 ${pager.totalRows}개 리뷰` : "리뷰 목록"}
           </p>
-          <Link
+          {authContext.accessToken && <Link
             href="/Ch08RestAPI/Exam01Review/ReviewWrite"
             className="rounded bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700"
           >
             글쓰기
           </Link>
+          }
         </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[900px] table-auto border-collapse text-left text-sm">
@@ -57,13 +60,15 @@ export default function Exam01Review() {
                 <tr key={review.reviewId} className="border-b border-gray-100 transition-colors hover:bg-gray-50">
                   <td className="w-px whitespace-nowrap px-3 py-2">{review.reviewId}</td>
                   <td className="px-3 py-2 text-left">
-                    <Link
+                    {authContext.accessToken ? (<Link
                       href={`/Ch08RestAPI/Exam01Review/ReviewDetail?reviewId=${review.reviewId}`}
                       className="block w-full truncate rounded px-2 py-1 text-orange-700"
                       title={review.title}
                     >
                       {review.title}
-                    </Link>
+                    </Link>)
+                      : (<span className="block w-full truncate rounded px-2 py-1 text-orange-700 cursor-default" title={review.title}>{review.title}</span>)
+                    }
                   </td>
                   <td className="w-px whitespace-nowrap px-3 py-2">{review.writer}</td>
                   <td className="w-px whitespace-nowrap px-3 py-2">
@@ -125,11 +130,10 @@ export default function Exam01Review() {
                 type="button"
                 onClick={() => setPageNo(number)}
                 aria-current={pager.pageNo === number ? "page" : undefined}
-                className={`rounded border px-3 py-1.5 text-sm ${
-                  pager.pageNo === number
+                className={`rounded border px-3 py-1.5 text-sm ${pager.pageNo === number
                     ? "border-orange-600 bg-orange-600 text-white"
                     : "cursor-pointer hover:bg-gray-100"
-                }`}
+                  }`}
               >
                 {number}
               </button>

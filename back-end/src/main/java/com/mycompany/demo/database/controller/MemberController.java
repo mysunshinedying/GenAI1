@@ -1,16 +1,10 @@
 package com.mycompany.demo.database.controller;
-import com.mycompany.demo.database.exception.DuplicatedMemberIDException;
-import com.mycompany.demo.database.exception.NoAccountException;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.mycompany.demo.database.dto.*;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,8 +14,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mycompany.demo.database.dto.JoinMemberRequest;
+import com.mycompany.demo.database.dto.MemberLoginRequest;
+import com.mycompany.demo.database.dto.MemberLoginResponse;
+import com.mycompany.demo.database.dto.MemberResponse;
+import com.mycompany.demo.database.dto.Pager;
+import com.mycompany.demo.database.dto.UpdateMemberRequest;
 import com.mycompany.demo.database.entity.Member;
 import com.mycompany.demo.database.service.MemberService;
+import com.mycompany.demo.jwt.service.JwtService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,9 +33,11 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 
     private final MemberService memberService;
+    private final JwtService jwtService;
 
-    public MemberController(MemberService memberService) {
+    public MemberController(MemberService memberService, JwtService jwtService) {
         this.memberService = memberService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping("/get-member")
@@ -164,4 +167,39 @@ public class MemberController {
 
         // return map;
     }
+
+    @PostMapping("/login-member")
+    public MemberLoginResponse login(@RequestBody MemberLoginRequest request) {
+
+        Member member = new Member();
+        member.setMemberId(request.getMemberId());
+        member.setPassword(request.getPassword());
+
+        String result = memberService.login(member);
+
+        MemberLoginResponse memberLoginResponse = new MemberLoginResponse();
+
+        if(result.equals("success")) {
+            // 로그인 성공 처리
+            memberLoginResponse.setStatus("success");
+            memberLoginResponse.setMemberId(request.getMemberId());
+
+            Member dbMember = memberService.getMember(request.getMemberId());
+
+            String token = jwtService.createJwt(dbMember);            
+            memberLoginResponse.setJwt(token);
+        } else if(result.equals("wrongmemberId")) {
+            // 로그인 실패 처리
+            memberLoginResponse.setStatus("wrongmemberId");
+            memberLoginResponse.setMessage("회원 아이디가 존재하지 않습니다.");
+        } else if(result.equals("wrongPassword")) {
+            // 로그인 실패 처리
+            memberLoginResponse.setStatus("wrongPassword");
+            memberLoginResponse.setMessage("비밀번호가 올바르지 않습니다.");
+        }
+
+        return memberLoginResponse;
+
+    }
+    
 }

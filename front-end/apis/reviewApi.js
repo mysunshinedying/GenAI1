@@ -13,6 +13,9 @@ export async function reviewWrite(formData) {
 export async function reviewDetail(reviewId) {
   return await api.get("/review/detail", {
     params: { reviewId },
+    headers: {
+      "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+    }
   })
 }
 
@@ -25,6 +28,12 @@ export function getReviewFileUrl(reviewId) {
     url: "/review/file",
     params: { reviewId },
   });
+}
+
+export async function reviewDelete(reviewId) {
+    return await api.delete("/review/delete", {
+        params: { reviewId },
+    })
 }
 
 //
